@@ -20,15 +20,16 @@ import "./SafeMath.sol";
 // token transfers
 // ----------------------------------------------------------------------------
 contract TPNDemoToken is ERC20Interface {
-    using SafeMath for uint;
+    using SafeMath for uint256;
 
-    uint256 constant private MAX_UINT256 = 2**256 - 1;
+    // uint256 constant private MAX_UINT256 = 2**256 - 1;
     mapping(address => uint256) balances;
     mapping(address => mapping(address => uint256)) public allowed;
 
     string public  name;
     string public symbol;
     uint8 public decimals;
+    uint _totalSupply;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -42,10 +43,10 @@ contract TPNDemoToken is ERC20Interface {
 
         // Update total suppply
         // _totalSupply = 100 000000 000000 000000; // in case to make 100 tokens
-        totalSupply = _initialAmount * (10 ** uint(_decimalUnits));
+        _totalSupply = _initialAmount * (10 ** uint256(_decimalUnits));
 
         // Give the creator all initial tokens
-        balances[msg.sender] = totalSupply; 
+        balances[msg.sender] = _totalSupply; 
         
         // Token Name
         // name = "TPN Demo Token";
@@ -57,6 +58,10 @@ contract TPNDemoToken is ERC20Interface {
         // Set the symbol for display
         // symbol = "TPNDemo";
         symbol = _tokenSymbol;
+    }
+
+    function totalSupply() public view returns (uint) {
+        return _totalSupply.safeSub(balances[address(0)]);
     }
 
     // ------------------------------------------------------------------------
@@ -87,14 +92,15 @@ contract TPNDemoToken is ERC20Interface {
     // - 0 value transfers are allowed
     // ------------------------------------------------------------------------
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-        uint256 allowance = allowed[_from][msg.sender];
 
-        require(balances[_from] >= _value && allowance >= _value);
-        
-        balances[_from] = SafeMath.safeSub(balances[_from], _value);
-        balances[_to] = SafeMath.safeAdd(balances[_to], _value);
+        require(balances[_from] >= _value);
+        require(allowed[_from][msg.sender] >= _value);
+        require(_to != address(0));
 
-        allowed[_from][msg.sender] = SafeMath.safeSub(allowed[_from][msg.sender], _value);
+        balances[_from] = balances[_from].safeSub(_value);
+        balances[_to] = balances[_to].safeAdd(_value);
+
+        allowed[_from][msg.sender] = allowed[_from][msg.sender].safeSub(_value);
         
         emit Transfer(_from, _to, _value);
         
@@ -106,7 +112,7 @@ contract TPNDemoToken is ERC20Interface {
     // Returns the amount of tokens approved by the owner that can be
     // transferred to the spender's account
     // ------------------------------------------------------------------------
-    function allowance(address _owner, address _spender) public view returns (uint remaining) {
+    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
         return allowed[_owner][_spender];
     }
 
