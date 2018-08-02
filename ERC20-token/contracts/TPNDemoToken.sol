@@ -19,7 +19,8 @@ import "./SafeMath.sol";
 // ERC20 Token, with the addition of symbol, name and decimals and assisted
 // token transfers
 // ----------------------------------------------------------------------------
-contract TPNDemoToken is ERC20Interface, SafeMath {
+contract TPNDemoToken is ERC20Interface {
+    using SafeMath for uint;
 
     uint256 constant private MAX_UINT256 = 2**256 - 1;
     mapping(address => uint256) balances;
@@ -33,19 +34,18 @@ contract TPNDemoToken is ERC20Interface, SafeMath {
     // Constructor
     // ------------------------------------------------------------------------
     constructor(
-        uint256 _initialAmount,
-        string _tokenName,
-        uint8 _decimalUnits,
-        string _tokenSymbol
-    ) public {
-        // balances[0x91F4bE2426A700AA6fdF0B29AF970818761717A6] = _totalSupply;
-        // emit Transfer(address(0), 0x91F4bE2426A700AA6fdF0B29AF970818761717A6, _totalSupply);
+        uint256 _initialAmount, 
+        string _tokenName, 
+        string _tokenSymbol, 
+        uint8 _decimalUnits
+        ) public {
+
+        // Update total suppply
+        // _totalSupply = 100 000000 000000 000000; // in case to make 100 tokens
+        totalSupply = _initialAmount * (10 ** uint(_decimalUnits));
 
         // Give the creator all initial tokens
-        balances[msg.sender] = _initialAmount; 
-        // Update total suppply
-        // _totalSupply = 100000000000000000000000000; // in case to make 100 tokens
-        totalSupply = _initialAmount;
+        balances[msg.sender] = totalSupply; 
         
         // Token Name
         // name = "TPN Demo Token";
@@ -57,28 +57,28 @@ contract TPNDemoToken is ERC20Interface, SafeMath {
         // Set the symbol for display
         // symbol = "TPNDemo";
         symbol = _tokenSymbol;
-
     }
 
     // ------------------------------------------------------------------------
-    // Transfer the balance from token owner's account to account
+    // Transfer the balance from token owner's account to another account
     // - Owner's account must have sufficient balance to transfer
     // - 0 value transfers are allowed
     // ------------------------------------------------------------------------
     function transfer(address _to, uint256 _value) public returns (bool success) {
         require(balances[msg.sender] >= _value);
         
-        balances[msg.sender] = safeSub(balances[msg.sender], _value);
-        balances[_to] = safeAdd(balances[_to], _value);
+        balances[msg.sender] = SafeMath.safeSub(balances[msg.sender], _value);
+        balances[_to] = SafeMath.safeAdd(balances[_to], _value);
         
         emit Transfer(msg.sender, _to, _value);
         
         return true;
     }
 
-
     // ------------------------------------------------------------------------
-    // Transfer tokens from the from account to the to account
+    // Transfer tokens from the 'from' account to the 'to' account
+    // 
+    // transferFrom method is used for a withdraw workflow!
     // 
     // The calling account must already have sufficient tokens approve(...)-d
     // for spending from the from account and
@@ -91,12 +91,10 @@ contract TPNDemoToken is ERC20Interface, SafeMath {
 
         require(balances[_from] >= _value && allowance >= _value);
         
-        balances[_from] = safeSub(balances[_from], _value);
-        balances[_to] = safeAdd(balances[_to], _value);
+        balances[_from] = SafeMath.safeSub(balances[_from], _value);
+        balances[_to] = SafeMath.safeAdd(balances[_to], _value);
 
-        if(allowance < MAX_UINT256) {
-            allowed[_from][msg.sender] = safeSub(allowed[_from][msg.sender], _value);
-        }
+        allowed[_from][msg.sender] = SafeMath.safeSub(allowed[_from][msg.sender], _value);
         
         emit Transfer(_from, _to, _value);
         
@@ -104,20 +102,20 @@ contract TPNDemoToken is ERC20Interface, SafeMath {
     }
 
 
-    // // ------------------------------------------------------------------------
-    // // Returns the amount of tokens approved by the owner that can be
-    // // transferred to the spender's account
-    // // ------------------------------------------------------------------------
-    // function allowance(address tokenOwner, address spender) public view returns (uint remaining) {
-    //     return allowed[tokenOwner][spender];
-    // }
+    // ------------------------------------------------------------------------
+    // Returns the amount of tokens approved by the owner that can be
+    // transferred to the spender's account
+    // ------------------------------------------------------------------------
+    function allowance(address _owner, address _spender) public view returns (uint remaining) {
+        return allowed[_owner][_spender];
+    }
 
 
     // ------------------------------------------------------------------------
     // Get the token balance for account tokenOwner
     // ------------------------------------------------------------------------
-    function balanceOf(address tokenOwner) public view returns (uint256 balance) {
-        return balances[tokenOwner];
+    function balanceOf(address _tokenOwner) public view returns (uint256 balance) {
+        return balances[_tokenOwner];
     }
 
     // // ------------------------------------------------------------------------

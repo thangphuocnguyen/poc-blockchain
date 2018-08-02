@@ -3,7 +3,7 @@ pragma solidity ^0.4.24;
 // ----------------------------------------------------------------------------
 // Safe maths
 // ----------------------------------------------------------------------------
-contract SafeMath {
+library SafeMath {
     function safeAdd(uint256 _a, uint256 _b) public pure returns (uint256 c) {
         c = _a + _b;
         assert(c >= _a);
