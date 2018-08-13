@@ -1,0 +1,4 @@
+## Runtime configuration for the app application.
+##
+core:
+  logging: WARN
