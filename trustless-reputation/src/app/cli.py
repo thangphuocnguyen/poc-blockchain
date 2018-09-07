@@ -6,6 +6,9 @@ from inspect import getfullargspec
 
 from . import __version__
 from .api import cmd
+from .api import demo
+from .api import signature_demo
+
 from .core import config
 from .core import logger
 
@@ -25,8 +28,11 @@ def main(argv=None):
     config.load(args.config)
     config.core.logging = args.warn
     command = args.command
+
     args = vars(args)
+
     spec = getfullargspec(command)
+
     if not spec.varkw:
         # No kwargs, remove unexpected arguments.
         args = {key: args[key] for key in args if key in spec.args}
@@ -51,11 +57,15 @@ def _args(argv=None):
             help="print version and exit")
     parser.add_argument("-w", "--warn", default="WARN",
             help="logger warning level [WARN]")
+
     common = ArgumentParser(add_help=False)  # common subcommand arguments
     common.add_argument("--name", "-n", default="World", help="greeting name")
+    
     subparsers = parser.add_subparsers(title="subcommands")
     
     _cmd(subparsers, common)
+    _cmd_demo(subparsers, common)
+    _signature_demo(subparsers, common)
     
     args = parser.parse_args(argv)
     if not args.config:
@@ -71,6 +81,16 @@ def _cmd(subparsers, common):
     """
     parser = subparsers.add_parser("cmd", parents=[common])
     parser.set_defaults(command=cmd)
+    return
+
+def _cmd_demo(subparsers, common):
+    parser = subparsers.add_parser("demo", parents=[common])
+    parser.set_defaults(command=demo)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+    return
+
+def _signature_demo(subparsers, common):
+    parser = subparsers.add_parser("signature", parents=[common])
+    parser.set_defaults(command=signature_demo)
     return
 
 

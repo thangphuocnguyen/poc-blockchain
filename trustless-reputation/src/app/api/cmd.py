@@ -1,4 +1,4 @@
-""" Implement the cmd1 command.
+""" Implement the cmd command.
 
 """
 from ..core import logger
