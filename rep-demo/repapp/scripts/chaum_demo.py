@@ -15,7 +15,7 @@ from repapp.sprovider.models import SProvider
 from repapp.transaction.models import Transaction
 
 from repapp.extensions import sqldb as db
-from repapp.common.chaum_utils import get_token, issue_token, unblind_token, verify_blind_token
+from repapp.common.chaum_utils import get_token, issue_token, unblind_token, verify_blind_token, verify_blind_token_signner
 
 
 class Demo(Command):
@@ -23,10 +23,10 @@ class Demo(Command):
     def run(self):
         print('Here is Chaum Blind Token demo!!!')
 
-        trans = db.session.query(Transaction).filter(Transaction.id == 1).first()
-        cus = db.session.query(Customer).filter(Customer.id == 1).first()
-        cus_trans = db.session.query(CustomerTransaction).filter(CustomerTransaction.id == 2).first()
-        sprovider = db.session.query(SProvider).filter(SProvider.id == 1).first()
+        trans = db.session.query(Transaction).filter(Transaction.id == 3).first()
+        cus = db.session.query(Customer).filter(Customer.id == 3).first()
+        cus_trans = db.session.query(CustomerTransaction).filter(CustomerTransaction.id == 3).first()
+        sprovider = db.session.query(SProvider).filter(SProvider.id == 3).first()
 
         trans_id = trans.identifier
         sp_id = sprovider.identifier
@@ -39,7 +39,7 @@ class Demo(Command):
         cus_blinded_msg = encrypted_msg
         # S2: Sprovider side
         # ----------------------------------------------------------------------
-        # Provider sign blinded message (make blind token)
+        # Provider sign to the blinded message that Customer sent (make blind token)
         blind_token = issue_token(cus.identifier, cus_blinded_msg, sprovider.privkey, trans_id)
 
         # Provider sent blink_token to Customer
@@ -52,8 +52,12 @@ class Demo(Command):
         token = unblind_token(sp_blind_token, sprovider.pubkey, r)
 
         # Verify blind_token
-        verify_blind_token(token, sprovider.pubkey, encrypted_msg)
-        # Customer unblind the token from sp_blind_token
+        # ----------------------------------------------------------------------
+        # Customer verifying
+        cus_result = verify_blind_token(token, sprovider.pubkey, cus_trans.pubkey)
+        
+        # Provider verifying
+        pro_result = verify_blind_token_signner(token, sprovider.prikey, cus_trans.pubkey)
 
         
         # Verify blind_token

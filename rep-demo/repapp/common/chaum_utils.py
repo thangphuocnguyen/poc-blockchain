@@ -47,6 +47,7 @@ def unblind_token(blind_token, provider_pubkey, r):
     provider_pubkey = bytes.fromhex(provider_pubkey)
     sp_key_obj = RSA.import_key(provider_pubkey)
 
+    # Token exactly the sign from Provider
     token = blind_token * r ** -1 % sp_key_obj.n
     print('<<token>>', token)
     
@@ -56,13 +57,29 @@ def verify_blind_token(blind_token, provider_pubkey, message):
     provider_pubkey = bytes.fromhex(provider_pubkey)
     sp_key_obj = RSA.import_key(provider_pubkey)
 
-    import ipdb
-    ipdb.set_trace() 
-
-    message = bytes.fromhex(message)
     message_hash = SHA256.new(message).digest()
+    message_hash_int = int.from_bytes(message_hash, byteorder='big')
+
     original_msg = blind_token ** sp_key_obj.e % sp_key_obj.n
 
+    print('\n message_hash_int>> ', message_hash_int)
+    print(' original_msg>> ', original_msg)
 
+    return original_msg == message_hash_int
+
+def verify_blind_token_signner(blind_token, provider_prikey, message):
+    
+    provider_prikey = bytes.fromhex(provider_prikey)
+    sp_key_obj = RSA.import_key(provider_prikey)
+
+    message_hash = SHA256.new(message).digest()
+    message_hash_int = int.from_bytes(message_hash, byteorder='big')
+
+    signned_msg = message_hash ** sp_key_obj.d % sp_key_obj.n
+
+    print('\n message_hash_int>> ', message_hash_int)
+    print(' signned_msg>> ', original_msg)
+
+    return signned_msg == message_hash_int
 
 

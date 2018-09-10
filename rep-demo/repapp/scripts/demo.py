@@ -2,6 +2,9 @@ import uuid
 
 from flask_script import Command
 
+from Cryptodome.PublicKey import RSA
+from Cryptodome.Hash import SHA256
+from ecdsa import SigningKey, SECP256k1
 
 from repapp.concept import customer, service_provider
 
@@ -19,31 +22,27 @@ class Demo(Command):
 
         # Generate Service Provider
         # ----------------------------------------------------------------------
+        # import ipdb
+        # ipdb.set_trace()
+        # bits = 1024 for normally RSA, e=3 for more ez on sample
+        provider_key_pair = RSA.generate(1024, e=3)
+
         sprovider = SProvider(
             identifier=str(uuid.uuid4()),
-            pubkey='pub',
-            privkey='pri',
-            e=0,
-            n=0,
-            d=0
+            pubkey=(provider_key_pair.publickey().exportKey()).hex(),
+            privkey=(provider_key_pair.exportKey()).hex()
         )
         db.session.add(sprovider)
         db.session.commit()
-
-        # Generate service provider keypair
-        sp = service_provider.ServiceProvider(
-            'sp01'
-        )
         
         # Generate new Transaction in db
         # ----------------------------------------------------------------------
         
         trans = Transaction(
             identifier=str(uuid.uuid4()),
-            desc='Transaction'
+            desc='Transaction {}'.format(sprovider.identifier)
         )
         sprovider.transactions.append(trans)
-        # db.session.add(trans)
         db.session.commit()
 
         # Generate new Customer
@@ -52,14 +51,12 @@ class Demo(Command):
         db.session.add(cus)
         db.session.commit()
         
-        cus_keypair = customer.Customer(
-            cus.identifier
-        )
+        cus_keypair = SigningKey.generate(curve=SECP256k1, hashfunc=SHA256)
 
         cus_trans = CustomerTransaction(
                 trans_identifier=trans.identifier,
-                pubkey=(cus_keypair.pubkey).hex(),
-                privkey=(cus_keypair.privkey.to_string()).hex()
+                pubkey=(cus_keypair.to_string()).hex(),
+                privkey=(cus_keypair.get_verifying_key().to_string()).hex()
             )
         cus.transactions.append(cus_trans)
         db.session.commit()
