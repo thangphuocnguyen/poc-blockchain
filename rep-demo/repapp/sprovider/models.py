@@ -13,9 +13,9 @@ class SProvider(db.Model):
 
     pubkey = Column(Text, nullable=False)
     privkey = Column(Text, nullable=False)
-    e = Column(String, nullable=False)
-    n = Column(String, nullable=False)
-    d = Column(String, nullable=False)
+    # e = Column(String, nullable=False)
+    # n = Column(String, nullable=False)
+    # d = Column(String, nullable=False)
 
     transactions = relationship('Transaction', backref="sproviders")
 

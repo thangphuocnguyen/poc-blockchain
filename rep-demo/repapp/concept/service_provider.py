@@ -16,14 +16,14 @@ class ServiceProvider(object):
         # ipdb.set_trace()
 
     
-    # def verify(self, message):
-    #     self.key_pair.verify()
+    # # def verify(self, message):
+    # #     self.key_pair.verify()
 
-    def issue_token(self, customer_identifier, m1, x):
-        # TODO: verify transaction identifier first
+    # def issue_token(self, customer_identifier, m1, x):
+    #     # TODO: verify transaction identifier first
 
-        token = m1 ** self.d % self.n
+    #     token = m1 ** self.d % self.n
 
-        import ipdb
-        ipdb.set_trace()
+    #     import ipdb
+    #     ipdb.set_trace()
 

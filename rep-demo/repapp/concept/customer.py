@@ -9,7 +9,7 @@ class Customer(object):
 
     # RSA keygen
     # def __init__(self, name: str, bits:int=2048, exponent:int=65537):
-    #     self.name = name
+    #     self.name = name  
     #     key_pair = RSA.generate(bits, e=exponent)
     #     self.pubkey = key_pair.publickey().exportKey()
     #     self.privatekey = key_pair.exportKey()
@@ -25,22 +25,22 @@ class Customer(object):
         self.pubkey = sk.get_verifying_key().to_string()
 
     
-    def get_token(self, transaction_identifier, sp_e, sp_n, sp_identifier, send_func):
-        m1 = self.pubkey
+    # def get_token(self, transaction_identifier, sp_e, sp_n, sp_identifier, send_func):
+    #     m1 = self.pubkey
 
-        _random = random.randrange(0, sp_n)
-        m1 = int.from_bytes(m1, byteorder=sys.byteorder)
-        m1 = m1 * _random ** sp_e % sp_n
+    #     _random = random.randrange(0, sp_n)
+    #     m1 = int.from_bytes(m1, byteorder=sys.byteorder)
+    #     m1 = m1 * _random ** sp_e % sp_n
 
-        # import ipdb
-        # ipdb.set_trace()
+    #     # import ipdb
+    #     # ipdb.set_trace()
 
-        send_func((m1, transaction_identifier), sp_identifier)
+    #     send_func((m1, transaction_identifier), sp_identifier)
 
-        return (m1, _random)
+    #     return (m1, _random)
     
-    def get_reputation(self, sp_identifier):
-        return 20
+    # def get_reputation(self, sp_identifier):
+    #     return 20
     
     
 
