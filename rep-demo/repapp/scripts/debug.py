@@ -41,19 +41,26 @@ class Demo(Command):
     # def RSA_demo(message, keypair):
         
         # Use 1024 bits as simplest example with e=3
-        from Cryptodome.PublicKey import RSA
-        
-        rsa_keypair = RSA.generate(1024, e=3)
-        rsa_pubkey = rsa_keypair.publickey().export_key()
+        # from Cryptodome.PublicKey import RSA
+        # rsa_keypair = RSA.generate(1024, e=3)
+        # rsa_pubkey = rsa_keypair.publickey().export_key()
 
-
-        from base64 import b64decode,b64encode
-
-        key_der = b64decode(rsa_pubkey)
-
+        # S1: Customer side
+        # ----------------------------------------------------------------------
         from repapp.common.utils import get_token
 
-        get_token(cus_trans.pubkey, 'sp1', rsa_pubkey, 'transx')
+        encrypted_msg = get_token(cus_trans.pubkey, 'sp1', sprovider.pubkey, 'transx')
 
-        import ipdb
-        ipdb.set_trace()
+
+        # S2: Sprovider side
+        # ----------------------------------------------------------------------
+        from repapp.common.utils import issue_token
+
+        signature_msg = issue_token(cus.identifier, encrypted_msg, sprovider.privkey, 'transx')
+
+        # S3: Customer side
+        # ----------------------------------------------------------------------
+        from repapp.common.utils import unblind_token
+
+        unblind_token(signature_msg, sprovider.pubkey)
+
