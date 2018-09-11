@@ -49,19 +49,28 @@ class Demo(Command):
         # ----------------------------------------------------------------------
         cus = Customer(identifier=str(uuid.uuid4()))
         db.session.add(cus)
-        db.session.commit()
+        # db.session.commit()
         
-        cus_keypair = SigningKey.generate(curve=SECP256k1, hashfunc=SHA256)
-
+        # cus_keypair = SigningKey.generate(curve=SECP256k1, hashfunc=SHA256)
+        # cus_trans = CustomerTransaction(
+        #         trans_identifier=trans.identifier,
+        #         pubkey=(cus_keypair.to_string()).hex(),
+        #         privkey=(cus_keypair.get_verifying_key().to_string()).hex()
+        #     )
+        
+        # Use RSA keypair for quickly demo
+        cus_keypair = RSA.generate(1024, e=3)
         cus_trans = CustomerTransaction(
                 trans_identifier=trans.identifier,
-                pubkey=(cus_keypair.to_string()).hex(),
-                privkey=(cus_keypair.get_verifying_key().to_string()).hex()
+                pubkey=(provider_key_pair.publickey().exportKey()).hex(),
+                privkey=(provider_key_pair.exportKey()).hex()
             )
+
         cus.transactions.append(cus_trans)
         db.session.commit()
 
-        
+        print('Customer id {} >> identifier {}'.format(cus.id, cus.identifier))
+        print('Customer_Transaction id {} >> identifier {}'.format(cus_trans.id, cus_trans.trans_identifier))
+        print('Provider id {} >> identifier {}'.format(sprovider.id, sprovider.identifier))
+        print('Transaction id {} >> identifier {}'.format(trans.id, trans.identifier))
 
-        import ipdb
-        ipdb.set_trace()

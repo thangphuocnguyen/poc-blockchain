@@ -33,6 +33,8 @@ def get_token(pubkey, provider_identifier, provider_pubkey, transaction_identifi
 
 def issue_token(customer_identifier, encrypted_msg, provider_prikey, transaction_identifier):
 
+    import ipdb
+    ipdb.set_trace()
     provider_prikey = bytes.fromhex(provider_prikey)
     sp_key_obj = RSA.import_key(provider_prikey)
 
