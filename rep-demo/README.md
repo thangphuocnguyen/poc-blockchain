@@ -51,4 +51,4 @@ Debug/demo command:
 
     Chaum sample:
 
-        $ python manage.py chaum
+        $ python manage.py chaum_demo

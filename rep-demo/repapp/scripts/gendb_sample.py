@@ -51,20 +51,20 @@ class GenerateDBSample(Command):
         db.session.add(cus)
         # db.session.commit()
         
-        # cus_keypair = SigningKey.generate(curve=SECP256k1, hashfunc=SHA256)
-        # cus_trans = CustomerTransaction(
-        #         trans_identifier=trans.identifier,
-        #         pubkey=(cus_keypair.to_string()).hex(),
-        #         privkey=(cus_keypair.get_verifying_key().to_string()).hex()
-        #     )
-        
-        # Use RSA keypair for quickly demo
-        cus_keypair = RSA.generate(6, e=3)
+        cus_keypair = SigningKey.generate(curve=SECP256k1, hashfunc=SHA256)
         cus_trans = CustomerTransaction(
                 trans_identifier=trans.identifier,
-                pubkey=(provider_key_pair.publickey().exportKey()).hex(),
-                privkey=(provider_key_pair.exportKey()).hex()
+                pubkey=(cus_keypair.to_string()).hex(),
+                privkey=(cus_keypair.get_verifying_key().to_string()).hex()
             )
+        
+        # # Use RSA keypair for quickly demo
+        # cus_keypair = RSA.generate(6, e=3)
+        # cus_trans = CustomerTransaction(
+        #         trans_identifier=trans.identifier,
+        #         pubkey=(provider_key_pair.publickey().exportKey()).hex(),
+        #         privkey=(provider_key_pair.exportKey()).hex()
+        #     )
 
         cus.transactions.append(cus_trans)
         db.session.commit()

@@ -22,7 +22,7 @@ class Demo(Command):
 
     def run(self):
         print('Here is Chaum Blind Token demo!!!')
-        data_id = 1
+        data_id = 3
 
         trans = db.session.query(Transaction).filter(Transaction.id == data_id).first()
         cus = db.session.query(Customer).filter(Customer.id == data_id).first()
