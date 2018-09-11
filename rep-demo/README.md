@@ -41,6 +41,10 @@ Debug/demo command:
 
         $ python manage.py runserver
 
+    Generate db for sample:
+
+        $ python manage.py gendb
+
     RSA sample:
 
         $ python manage.py debug

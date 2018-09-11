@@ -15,10 +15,10 @@ from repapp.transaction.models import Transaction
 from repapp.extensions import sqldb as db
 
 
-class Demo(Command):
+class GenerateDBSample(Command):
 
     def run(self):
-        print('Hello')
+        print('Generating DB sample for Demo!')
 
         # Generate Service Provider
         # ----------------------------------------------------------------------
@@ -35,7 +35,7 @@ class Demo(Command):
         db.session.add(sprovider)
         db.session.commit()
         
-        # Generate new Transaction in db
+        # Generate new Transaction in db    
         # ----------------------------------------------------------------------
         
         trans = Transaction(
@@ -59,7 +59,7 @@ class Demo(Command):
         #     )
         
         # Use RSA keypair for quickly demo
-        cus_keypair = RSA.generate(1024, e=3)
+        cus_keypair = RSA.generate(6, e=3)
         cus_trans = CustomerTransaction(
                 trans_identifier=trans.identifier,
                 pubkey=(provider_key_pair.publickey().exportKey()).hex(),
