@@ -22,7 +22,9 @@ class Demo(Command):
 
     def run(self):
         print('Here is Chaum Blind Token demo!!!')
-        data_id = 3
+        
+        # Please specs the demo_data id that you got from `gendb`
+        data_id = 5
 
         trans = db.session.query(Transaction).filter(Transaction.id == data_id).first()
         cus = db.session.query(Customer).filter(Customer.id == data_id).first()
@@ -51,16 +53,14 @@ class Demo(Command):
         # S3: Customer side
         # ----------------------------------------------------------------------
         token = unblind_token(sp_blind_token, sprovider.pubkey, r)
-
-        # Verify blind_token
-        # ----------------------------------------------------------------------
-        # Customer verifying
-        cus_result = verify_blind_token(token, sprovider.pubkey, cus_trans.pubkey)
-        
-        # Provider verifying
-        pro_result = verify_blind_token_signner(token, sprovider.prikey, cus_trans.pubkey)
+        # Customer verifying the token
+        cus_ver_result = verify_blind_token(token, sprovider.pubkey, cus_trans.pubkey)
+        print('\n!!!Customer side verifying token successed: ', cus_ver_result)
 
         
-        # Verify blind_token
-        import ipdb
-        ipdb.set_trace()
+        # Provider verifying token
+        pro_ver_result = verify_blind_token_signner(token, sprovider.privkey, cus_trans.pubkey)
+        print('\n!!!Provider side verifying token successed: ', pro_ver_result)
+        
+        # import ipdb
+        # ipdb.set_trace()

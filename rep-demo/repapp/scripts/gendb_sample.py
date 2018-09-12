@@ -59,7 +59,7 @@ class GenerateDBSample(Command):
             )
         
         # # Use RSA keypair for quickly demo
-        # cus_keypair = RSA.generate(6, e=3)
+        # cus_keypair = RSA.generate(1024, e=3)
         # cus_trans = CustomerTransaction(
         #         trans_identifier=trans.identifier,
         #         pubkey=(provider_key_pair.publickey().exportKey()).hex(),
