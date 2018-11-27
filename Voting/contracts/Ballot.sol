@@ -41,7 +41,7 @@ contract Ballot {
         voters[toVoter].voted = false;
         if (now > (startTime + 10 seconds)) {
             stage = Stage.Vote; 
-            startTime = now;
+            startTime = now; 
         }        
     }
 
