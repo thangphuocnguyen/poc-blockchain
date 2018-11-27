@@ -40,7 +40,8 @@ contract Ballot {
         voters[toVoter].weight = 1;
         voters[toVoter].voted = false;
         if (now > (startTime + 10 seconds)) {
-            stage = Stage.Vote; startTime = now;
+            stage = Stage.Vote; 
+            startTime = now;
         }        
     }
 
@@ -60,9 +61,9 @@ contract Ballot {
         
     }
 
-    function winningProposal() public constant returns (uint8 _winningProposal) {
+    function winningProposal() public view returns (uint8 _winningProposal) {
         if (stage != Stage.Done) {
-           return;
+            return;
         }
         uint256 winningVoteCount = 0;
         for (uint8 prop = 0; prop < proposals.length; prop++) {
