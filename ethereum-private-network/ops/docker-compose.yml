@@ -1,0 +1,57 @@
+version: '2'
+services:
+  eth-client-monitored:
+    build: eth-client
+    restart: on-failure
+    container_name: eth-client-monitored
+    hostname: ${ETH_MONITORED_HOST}
+    links:
+      - netstats
+    entrypoint: /root/start.sh
+    command: '--datadir=~/${ETH_DATA_DIR} --nodekeyhex=091bd6067cb4612df85d9c1ff85cc47f259ced4d4cd99816b14f35650f59c322 --rpcapi "db,personal,eth,net,web3" --rpccorsdomain="*" --networkid=${ETH_NETWORK_ID} --rpc --rpcaddr="0.0.0.0"'
+    volumes:
+      - ./files/password:/root/files/password:ro
+      - ./files/genesis.json:/root/files/genesis.json:ro
+      - ./files/keystore:/root/${ETH_DATA_DIR}/keystore:rw
+    ports:
+      - "30303:30303"
+      - "30303:30303/udp"
+      - "8545:8545"
+    environment:
+      WS_SECRET: ${WS_SECRET}
+      WS_SERVER: ${WS_SERVER}
+      NODE_ENV: ${NODE_ENV}
+      TZ: ${TZ}
+      ETH_MONITORED_HOST: ${ETH_MONITORED_HOST}
+      ETH_NETWORK_ID: ${ETH_NETWORK_ID}
+  
+  eth:
+    build: eth-client
+    restart: on-failure
+    links:
+      - eth-client-monitored
+      - netstats
+    entrypoint: /root/start.sh
+    volumes:
+      - ./files/password:/root/files/password:ro
+      - ./files/genesis.json:/root/files/genesis.json:ro
+      - ./files/keystore:/root/${ETH_DATA_DIR}/keystore:rw
+    command: '--datadir=~/${ETH_DATA_DIR} --rpccorsdomain="*" --networkid=${ETH_NETWORK_ID} --rpc --bootnodes="enode://288b97262895b1c7ec61cf314c2e2004407d0a5dc77566877aad1f2a36659c8b698f4b56fd06c4a0c0bf007b4cfb3e7122d907da3b005fa90e724441902eb19e@XXX:30303"'
+    environment:
+      WS_SECRET: ${WS_SECRET}
+      WS_SERVER: ${WS_SERVER}
+      NODE_ENV: ${NODE_ENV}
+      TZ: ${TZ}
+      ETH_MONITORED_HOST: ${ETH_MONITORED_HOST}
+      ETH_DATA_DIR: ${ETH_DATA_DIR}
+      ETH_NETWORK_ID: ${ETH_NETWORK_ID}
+
+  netstats:
+    build: eth-netstats
+    restart: on-failure
+    container_name: eth-netstats
+    environment:
+      WS_SECRET: ${WS_SECRET}
+      TZ: ${TZ}
+    ports:
+      - "3000:3000"
