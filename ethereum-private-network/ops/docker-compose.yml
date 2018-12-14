@@ -2,7 +2,7 @@ version: '2'
 services:
   eth-client-monitored:
     build: eth-client
-    # restart: on-failure
+    restart: on-failure
     container_name: eth-client-monitored
     hostname: ${ETH_MONITORED_HOST}
     links:
@@ -27,7 +27,6 @@ services:
       ETH_LOGGING_VERBOSITY: ${ETH_LOGGING_VERBOSITY}
     entrypoint: /root/start.sh
     command: '--datadir=${ETH_DATA_DIR} 
-              --ipcpath ${ETH_DATA_DIR}/geth.ipc 
               --nodekeyhex=${ETH_NODEKEYHEX}
               --rpcapi "db,personal,eth,net,web3" 
               --rpccorsdomain="*" 
@@ -36,10 +35,15 @@ services:
               --rpcaddr="0.0.0.0"
               --verbosity ${ETH_LOGGING_VERBOSITY}
               --mine'
+              # --ipcpath ${ETH_DATA_DIR}/geth.ipc 
+    networks: 
+      vpcchain:
+        ipv4_address: 10.5.0.3
+
 
   eth:
     build: eth-client
-    # restart: on-failure
+    restart: on-failure
     links:
       - eth-client-monitored
       - netstats
@@ -52,20 +56,22 @@ services:
       WS_SERVER: ${WS_SERVER}
       NODE_ENV: ${NODE_ENV}
       TZ: ${TZ}
-      ETH_MONITORED_HOST: ${ETH_MONITORED_HOST}
+      ETH_MONITORED_HOST: eth-client-monitored
       ETH_DATA_DIR: ${ETH_DATA_DIR}
       ETH_NETWORK_ID: ${ETH_NETWORK_ID}
       ETH_BOOTNODE: ${ETH_BOOTNODE}
       ETH_LOGGING_VERBOSITY: ${ETH_LOGGING_VERBOSITY}
     entrypoint: /root/start.sh
-    command: '--datadir=${ETH_DATA_DIR} 
-              --ipcpath ${ETH_DATA_DIR}/geth.ipc 
+    command: '--datadir=${ETH_DATA_DIR}  
               --rpccorsdomain="*" 
               --networkid=${ETH_NETWORK_ID} 
               --rpc 
-              --bootnodes="enode://${ETH_BOOTNODE}@XXX:30303"
+              --bootnodes="enode://${ETH_BOOTNODE}@10.5.0.5:30303"
               --verbosity ${ETH_LOGGING_VERBOSITY}
               --mine'
+              # --ipcpath ${ETH_DATA_DIR}/geth.ipc
+    networks: 
+      - vpcchain
 
   netstats:
     build: eth-netstats
@@ -76,6 +82,9 @@ services:
       TZ: ${TZ}
     ports:
       - "3000:3000"
+    networks: 
+      vpcchain:
+        ipv4_address: 10.5.0.2
 
   # eth-playground:
   #   build: eth-client
@@ -98,3 +107,11 @@ services:
   #     ETH_NETWORK_ID: ${ETH_NETWORK_ID}
   #   command: tail -F ${ETH_DATA_DIR}/geth.ipc
   #   # command: tail -f geth.log
+
+networks:
+  vpcchain:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
