@@ -1,12 +1,12 @@
 version: '2'
 services:
-  eth-client-monitored:
+  eth-bootnode:
     build: eth-client
     restart: on-failure
-    container_name: eth-client-monitored
-    hostname: ${ETH_MONITORED_HOST}
+    container_name: eth-bootnode
+    hostname: ${ETH_BOOTNODE}
     links:
-      - netstats
+      - eth-netstats
     volumes:
       - ./files/password:/root/files/password:ro
       - ./files/genesis.json:/root/files/genesis.json:ro
@@ -21,8 +21,8 @@ services:
       NODE_ENV: ${NODE_ENV}
       TZ: ${TZ}
       ETH_DATA_DIR: ${ETH_DATA_DIR}
-      ETH_MONITORED_HOST: ${ETH_MONITORED_HOST}
       ETH_NETWORK_ID: ${ETH_NETWORK_ID}
+      ETH_BOOTNODE: ${ETH_BOOTNODE}
       ETH_NODEKEYHEX: ${ETH_NODEKEYHEX}
       ETH_LOGGING_VERBOSITY: ${ETH_LOGGING_VERBOSITY}
     entrypoint: /root/start.sh
@@ -46,8 +46,8 @@ services:
     build: eth-client
     restart: on-failure
     links:
-      - eth-client-monitored
-      - netstats
+      - eth-bootnode
+      - eth-netstats
     volumes:
       - ./files/password:/root/files/password:ro
       - ./files/genesis.json:/root/files/genesis.json:ro
@@ -57,17 +57,17 @@ services:
       WS_SERVER: ${WS_SERVER}
       NODE_ENV: ${NODE_ENV}
       TZ: ${TZ}
-      ETH_MONITORED_HOST: eth-client-monitored
+      ETH_BOOTNODE: eth-bootnode
       ETH_DATA_DIR: ${ETH_DATA_DIR}
       ETH_NETWORK_ID: ${ETH_NETWORK_ID}
-      ETH_BOOTNODE: ${ETH_BOOTNODE}
+      ETH_BOOTNODE_ADDRESS: ${ETH_BOOTNODE_ADDRESS}
       ETH_LOGGING_VERBOSITY: ${ETH_LOGGING_VERBOSITY}
     entrypoint: /root/start.sh
     command: '--datadir=${ETH_DATA_DIR}  
               --rpccorsdomain="*" 
               --networkid=${ETH_NETWORK_ID} 
               --rpc 
-              --bootnodes="enode://${ETH_BOOTNODE}@10.5.0.3:30303"
+              --bootnodes="enode://${ETH_BOOTNODE_ADDRESS}@BOOTNODE_IP:30303"
               --verbosity ${ETH_LOGGING_VERBOSITY}
               --mine
               --minerthreads 1'
@@ -75,7 +75,7 @@ services:
     networks: 
       - vpcchain
 
-  netstats:
+  eth-netstats:
     build: eth-netstats
     restart: on-failure
     container_name: eth-netstats
@@ -92,8 +92,8 @@ services:
   #   build: eth-client
   #   restart: on-failure
   #   links:
-  #     - eth-client-monitored
-  #     - netstats
+  #     - eth-bootnode
+  #     - eth-netstats
   #   volumes:
   #     - ./files/password:/root/files/password:ro
   #     - ./files/genesis.json:/root/files/genesis.json:ro
@@ -104,7 +104,7 @@ services:
   #     WS_SERVER: ${WS_SERVER}
   #     NODE_ENV: ${NODE_ENV}
   #     TZ: ${TZ}
-  #     ETH_MONITORED_HOST: ${ETH_MONITORED_HOST}
+  #     ETH_BOOTNODE: ${ETH_BOOTNODE}
   #     ETH_DATA_DIR: ${ETH_DATA_DIR}
   #     ETH_NETWORK_ID: ${ETH_NETWORK_ID}
   #   command: tail -F ${ETH_DATA_DIR}/geth.ipc
