@@ -16,8 +16,8 @@ sleep 3
 BOOTSTRAP_IP=$(getent hosts "$ETH_BOOTNODE" | cut -d" " -f1)
 GETH_OPTS=${@/BOOTNODE_IP/$BOOTSTRAP_IP}
 
-echo "GETH_OPTS=========================================================="
-echo $GETH_OPTS
+# echo "GETH_OPTS=========================================================="
+# echo $GETH_OPTS
 
 geth $GETH_OPTS
 # geth "$@"
