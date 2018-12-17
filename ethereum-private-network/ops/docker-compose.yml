@@ -37,10 +37,6 @@ services:
               --mine
               --minerthreads 1'
               # --ipcpath ${ETH_DATA_DIR}/geth.ipc 
-    networks: 
-      vpcchain:
-        ipv4_address: 10.5.0.3
-
 
   eth:
     build: eth-client
@@ -72,8 +68,6 @@ services:
               --mine
               --minerthreads 1'
               # --ipcpath ${ETH_DATA_DIR}/geth.ipc
-    networks: 
-      - vpcchain
 
   eth-netstats:
     build: eth-netstats
@@ -84,36 +78,3 @@ services:
       TZ: ${TZ}
     ports:
       - "3000:3000"
-    networks: 
-      vpcchain:
-        ipv4_address: 10.5.0.2
-
-  # eth-playground:
-  #   build: eth-client
-  #   restart: on-failure
-  #   links:
-  #     - eth-bootnode
-  #     - eth-netstats
-  #   volumes:
-  #     - ./files/password:/root/files/password:ro
-  #     - ./files/genesis.json:/root/files/genesis.json:ro
-  #     # - ./data-playground:${ETH_DATA_DIR}
-  #     - ./files/keystore:${ETH_DATA_DIR}/keystore:rw
-  #   environment:
-  #     WS_SECRET: ${WS_SECRET}
-  #     WS_SERVER: ${WS_SERVER}
-  #     NODE_ENV: ${NODE_ENV}
-  #     TZ: ${TZ}
-  #     ETH_BOOTNODE: ${ETH_BOOTNODE}
-  #     ETH_DATA_DIR: ${ETH_DATA_DIR}
-  #     ETH_NETWORK_ID: ${ETH_NETWORK_ID}
-  #   command: tail -F ${ETH_DATA_DIR}/geth.ipc
-  #   # command: tail -f geth.log
-
-networks:
-  vpcchain:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.5.0.0/16
-          gateway: 10.5.0.1
