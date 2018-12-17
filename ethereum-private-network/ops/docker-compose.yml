@@ -34,7 +34,8 @@ services:
               --rpc 
               --rpcaddr="0.0.0.0"
               --verbosity ${ETH_LOGGING_VERBOSITY}
-              --mine'
+              --mine
+              --minerthreads 1'
               # --ipcpath ${ETH_DATA_DIR}/geth.ipc 
     networks: 
       vpcchain:
@@ -66,9 +67,10 @@ services:
               --rpccorsdomain="*" 
               --networkid=${ETH_NETWORK_ID} 
               --rpc 
-              --bootnodes="enode://${ETH_BOOTNODE}@10.5.0.5:30303"
+              --bootnodes="enode://${ETH_BOOTNODE}@10.5.0.3:30303"
               --verbosity ${ETH_LOGGING_VERBOSITY}
-              --mine'
+              --mine
+              --minerthreads 1'
               # --ipcpath ${ETH_DATA_DIR}/geth.ipc
     networks: 
       - vpcchain
