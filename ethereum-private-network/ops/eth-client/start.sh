@@ -1,7 +1,10 @@
 #!/bin/bash
 set -e
 cd /root/api-app
-# perl -pi -e "s/XXX/$(hostname)/g" app.json
+
+# Replace some setting on app.json
+perl -pi -e "s/SETTING_INSTANCE_NAME/$(hostname)/g" app.json
+
 /usr/bin/pm2 start ./app.json
 sleep 3
 
@@ -9,18 +12,12 @@ sleep 3
 geth --datadir=$ETH_DATA_DIR init "/root/files/genesis.json"
 sleep 3
 
-# BOOTSTRAP_IP='getent hosts "$ETH_MONITORED_HOST" | cut -d" " -f1'
+# Enable Dynamic IP on Docker container
+BOOTSTRAP_IP=$(getent hosts "$ETH_BOOTNODE" | cut -d" " -f1)
+GETH_OPTS=${@/BOOTNODE_IP/$BOOTSTRAP_IP}
 
-# GETH_OPTS=${@/XXX/$BOOTSTRAP_IP}
+echo "GETH_OPTS=========================================================="
+echo $GETH_OPTS
 
-# echo "GETH_OPTS=========================================================="
-# echo $GETH_OPTS
-# echo "GETH_OPTS=========================================================="
-
-# echo $ETH_MONITORED_HOST
-echo "OPTs======================================================"
-echo "$@"
-echo "=========================================================="
-
-# geth $GETH_OPTS
-geth "$@"
+geth $GETH_OPTS
+# geth "$@"
