@@ -26,7 +26,7 @@
 
 2. **Init account**
    
-   This setup already includes 5 accounts that already pre-alocating with 20 Eth on `genesis.json
+   This setup already includes 5 accounts that already pre-alocating with 20 Eth on `genesis.json`
    
    In case you want to manual create your own account, you can create as manual via:
    
@@ -41,7 +41,7 @@
 
 	* An eth-bootnodes that works as a bootnode which allow others find each other in Private Network
 	* An eth-netstats that allow to monitoring all node activity on network.
-	* Four eth (Ethereum Node) client that connected to Bootnode and auto mining (Those node already include Ethereum Network Intelligence API extension.
+	* Four eth (Ethereum Node) client that connected to Bootnode and auto mining (Those node already include Ethereum Network Intelligence API extension).
 
 
 4. **Access Netstats Monitoring**
