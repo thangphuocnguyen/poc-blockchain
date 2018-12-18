@@ -77,4 +77,31 @@
 	
 	`$ docker exec -it [container name] geth attach --datadir=[Data Directory that configured by ETH_DATA_DIR`
 	
+## Techstacks
+
+* [Ethereum](https://www.ethereum.org/)
+
+	> Ethereum is a decentralized platform that runs smart contracts, applications that run exactly as programmed without possibility of downtime, censorship, fraud or third party interference.
 	
+	> [The Homestead Release](http://ethdocs.org/en/latest/introduction/the-homestead-release.html) is the second major version of the Ethereum platform and is the first production release of Ethereum. It includes several protocol changes and a networking change that provides the ability to do further network upgrades.
+
+* [Go-Ethereum - Geth v1.8.19](https://geth.ethereum.org/)
+
+	> Official Go implementation of the Ethereum protocol 
+
+* [Docker](https://www.docker.com/)
+
+	> Docker provides a way to run applications securely isolated in a container, packaged with all its dependencies and libraries.
+
+* [Docker-Compose](https://docs.docker.com/compose/overview/)
+
+	> Compose is a tool for defining and running multi-container Docker applications
+
+* [Ethereum Network Intelligence API](https://github.com/cubedro/eth-net-intelligence-api)
+
+	> This is the backend service which runs along with ethereum and tracks the network status, fetches information through JSON-RPC and connects through WebSockets to eth-netstats to feed information
+
+* [Ethereum Netstats](https://github.com/cubedro/eth-netstats)
+
+	> A visual interface for tracking ethereum network status. It uses WebSockets to receive stats from running nodes and output them through an angular interface. It is the front-end implementation for eth-net-intelligence-api
+ 
