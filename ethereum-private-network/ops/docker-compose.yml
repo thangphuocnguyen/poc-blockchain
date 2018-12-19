@@ -10,6 +10,8 @@ services:
     volumes:
       - ./files/password:/root/files/password:ro
       - ./files/genesis.json:/root/files/genesis.json:ro
+      # - ./eth-data/datadir/geth:${ETH_DATA_DIR}/geth
+      # - ./eth-data/ethash:/root/.ethash
       - ./files/keystore:${ETH_DATA_DIR}/keystore:rw
     ports:
       - "30303:30303"
@@ -28,11 +30,11 @@ services:
     entrypoint: /root/start.sh
     command: '--datadir=${ETH_DATA_DIR} 
               --nodekeyhex=${ETH_NODEKEYHEX}
-              --rpcapi "db,personal,eth,net,web3" 
-              --rpccorsdomain="*" 
               --networkid=${ETH_NETWORK_ID} 
               --rpc 
               --rpcaddr="0.0.0.0"
+              --rpcapi "db,personal,eth,net,web3" 
+              --rpccorsdomain="*" 
               --verbosity ${ETH_LOGGING_VERBOSITY}
               --mine
               --minerthreads 1'
